@@ -45,9 +45,15 @@ class AVehicleDemoPawn : public AWheeledVehiclePawn
 	/** Cast pointer to the Chaos Vehicle movement component */
 	TObjectPtr<UChaosWheeledVehicleMovementComponent> ChaosVehicleMovement;
 
-	uint8 maxGear = 0;
-	int8 currentGear = 0;
-	int8 minGear = 0;
+	/** For manual transmission */
+	uint8 MaxForwardGear = 0; 	/** Maximum forward gear (e.g. 5 = up to 5th gear) */
+	int8 CurrentGear = 0;		/** Current gear (e.g. -1 = reverse, 0 = neutral, 1+ = forward gears) */
+	int8 MinReverseGear = 0;    /** Minimum reverse gear (e.g. -1 = single reverse gear)*/
+public:
+	/** Scaling factor applied to raw steering input to produce the final steering angle in degrees */
+	UPROPERTY(EditAnywhere, Category = VehicleSetup)
+	float SteeringInputMultiplier = 150.f;
+
 protected:
 
 	/** Steering Action */

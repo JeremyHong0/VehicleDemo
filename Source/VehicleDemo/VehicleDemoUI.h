@@ -29,8 +29,18 @@ public:
 
 	/** Called to update the gear display */
 	void UpdateGear(int32 NewGear);
-
+	
+	/** Called to update the engine rpm display */
 	void UpdateEngineRPM(float NewEngineRPM);
+
+	/** Called to update the break display */
+	void UpdateBreak(float NewBreak);
+	
+	/** Called to update the throttle display */
+	void UpdateThrottle(float NewThrottle);
+
+	/** Called to update the steering display */
+	void UpdateSteering(float NewSteering);
 
 protected:
 
@@ -45,4 +55,18 @@ protected:
 	/** Implemented in Blueprint to display the new engine rpm */
 	UFUNCTION(BlueprintImplementableEvent, Category = Vehicle)
 	void OnEngineRPMUpdate(float NewRpm);
+
+	/** Implemented in Blueprint to display the new break amount */
+	UFUNCTION(BlueprintImplementableEvent, Category = Vehicle)
+	void OnBreakUpdate(float NewBreak);
+	
+	/** Implemented in Blueprint to display the new throttle amount */
+	UFUNCTION(BlueprintImplementableEvent, Category = Vehicle)
+	void OnThrottleUpdate(float NewThrottle);
+
+	/** Implemented in Blueprint to display the new steering amount */
+	UFUNCTION(BlueprintImplementableEvent, Category = Vehicle)
+	void OnSteeringUpdate(float NewSteering);
 };
+
+

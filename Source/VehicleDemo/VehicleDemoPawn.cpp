@@ -58,8 +58,8 @@ void AVehicleDemoPawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	maxGear = ChaosVehicleMovement->TransmissionSetup.ForwardGearRatios.Num();
-	minGear = -ChaosVehicleMovement->TransmissionSetup.ReverseGearRatios.Num();
+	MaxForwardGear = ChaosVehicleMovement->TransmissionSetup.ForwardGearRatios.Num();
+	MinReverseGear = -ChaosVehicleMovement->TransmissionSetup.ReverseGearRatios.Num();
 }
 
 
@@ -219,18 +219,18 @@ void AVehicleDemoPawn::ResetVehicle(const FInputActionValue& Value)
 
 void AVehicleDemoPawn::UpShift(const FInputActionValue& Value) 
 {
-	if (++currentGear >= maxGear)
-		currentGear = maxGear;
+	if (++CurrentGear >= MaxForwardGear)
+		CurrentGear = MaxForwardGear;
 	
-	ChaosVehicleMovement->SetTargetGear(currentGear, false);
+	ChaosVehicleMovement->SetTargetGear(CurrentGear, false);
 }
 
 void AVehicleDemoPawn::DownShift(const FInputActionValue& Value) 
 {
-	if (--currentGear <= minGear)
-		currentGear = minGear;
+	if (--CurrentGear <= MinReverseGear)
+		CurrentGear = MinReverseGear;
 		
-	ChaosVehicleMovement->SetTargetGear(currentGear, false);
+	ChaosVehicleMovement->SetTargetGear(CurrentGear, false);
 }
 
 #undef LOCTEXT_NAMESPACE

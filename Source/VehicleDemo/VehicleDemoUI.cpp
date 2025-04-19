@@ -20,6 +20,23 @@ void UVehicleDemoUI::UpdateGear(int32 NewGear)
 
 void UVehicleDemoUI::UpdateEngineRPM(float NewEngineRPM)
 {
+	// call the Blueprint handler
 	OnEngineRPMUpdate(NewEngineRPM);
 }
 
+void UVehicleDemoUI::UpdateBreak(float NewBreak)
+{
+	// call the Blueprint handler
+	OnBreakUpdate(NewBreak);
+}
+
+void UVehicleDemoUI::UpdateThrottle(float NewThrottle)
+{
+	// call the Blueprint handler
+	OnThrottleUpdate(NewThrottle);
+}
+void UVehicleDemoUI::UpdateSteering(float NewSteering)
+{
+	// call the Blueprint handler
+	OnSteeringUpdate(NewSteering);
+}

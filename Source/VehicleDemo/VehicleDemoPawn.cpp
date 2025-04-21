@@ -10,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "ChaosWheeledVehicleMovementComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
@@ -44,6 +45,9 @@ AVehicleDemoPawn::AVehicleDemoPawn()
 
 	BackCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Back Camera"));
 	BackCamera->SetupAttachment(BackSpringArm);
+
+	RoomMirrorSceneCaptureComponent2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("Back Mirror"));
+	RoomMirrorSceneCaptureComponent2D->SetupAttachment(GetMesh());
 
 	// Configure the car mesh
 	GetMesh()->SetSimulatePhysics(true);

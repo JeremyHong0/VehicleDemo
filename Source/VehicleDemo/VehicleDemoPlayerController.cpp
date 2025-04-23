@@ -45,7 +45,7 @@ void AVehicleDemoPlayerController::Tick(float Delta)
 	{
 		VehicleUI->UpdateSpeed(VehiclePawn->GetChaosVehicleMovement()->GetForwardSpeed());
 		VehicleUI->UpdateGear(VehiclePawn->GetChaosVehicleMovement()->GetCurrentGear());
-		VehicleUI->UpdateEngineRPM(VehiclePawn->GetChaosVehicleMovement()->GetEngineRotationSpeed());
+		VehicleUI->UpdateEngineRPM(VehiclePawn->GetChaosVehicleMovement()->PhysicsVehicleOutput()->EngineRPM);
 		VehicleUI->UpdateBreak(VehiclePawn->GetChaosVehicleMovement()->GetBrakeInput());
 		VehicleUI->UpdateThrottle(VehiclePawn->GetChaosVehicleMovement()->GetThrottleInput());
 		VehicleUI->UpdateSteering(VehiclePawn->GetChaosVehicleMovement()->GetSteeringInput() * VehiclePawn->SteeringInputMultiplier);

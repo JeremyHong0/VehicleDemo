@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputActionValue.h"
 #include "WheeledVehiclePawn.h"
 #include "VehicleDemoPawn.generated.h"
 
@@ -53,13 +54,24 @@ class AVehicleDemoPawn : public AWheeledVehiclePawn
 	uint8 MaxForwardGear = 0; 	/** Maximum forward gear (e.g. 5 = up to 5th gear) */
 	int8 CurrentGear = 0;		/** Current gear (e.g. -1 = reverse, 0 = neutral, 1+ = forward gears) */
 	int8 MinReverseGear = 0;    /** Minimum reverse gear (e.g. -1 = single reverse gear)*/
+
 public:
-	/** Scaling factor applied to raw steering input to produce the final steering angle in degrees */
+	/** Scaling factor applied to raw steering input to produce the final steering angle in degrees - for steer wheel display on UI */
 	UPROPERTY(EditAnywhere, Category = VehicleSetup)
 	float SteeringInputMultiplier = 150.f;
-
+	
 protected:
+	UPROPERTY(EditAnywhere, Category = VFX)
+	int32 NumExhaust;
+	
+	/** For rear wheel skidding vfx */
+	UPROPERTY(EditAnywhere, Category = VFX)
+	UParticleSystem* WheelSkiddingVFX;
 
+	/** For down shift vfx */
+	UPROPERTY(EditAnywhere, Category = VFX)
+	UParticleSystem* PopAndBangVFX;
+	
 	/** Steering Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input)
 	UInputAction* SteeringAction;
@@ -123,6 +135,8 @@ protected:
 	/** Handles throttle input */
 	void Throttle(const FInputActionValue& Value);
 
+	void ThrottleOff(const FInputActionValue& Value);
+
 	/** Handles brake input */
 	void Brake(const FInputActionValue& Value);
 
@@ -146,6 +160,8 @@ protected:
 	void UpShift(const FInputActionValue& Value);
 	void DownShift(const FInputActionValue& Value);
 
+	void TrySpawnPopAndBangFX() const;
+
 
 	/** Called when the brake lights are turned on or off */
 	UFUNCTION(BlueprintImplementableEvent, Category="Vehicle")
@@ -163,5 +179,7 @@ public:
 	/** Returns the cast Chaos Vehicle Movement subobject */
 	FORCEINLINE const TObjectPtr<UChaosWheeledVehicleMovementComponent>& GetChaosVehicleMovement() const { return ChaosVehicleMovement; }
 };
+
+
 
 

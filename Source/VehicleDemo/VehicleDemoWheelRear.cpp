@@ -2,6 +2,7 @@
 
 #include "VehicleDemoWheelRear.h"
 #include "UObject/ConstructorHelpers.h"
+#include "Particles/ParticleSystemComponent.h"
 
 UVehicleDemoWheelRear::UVehicleDemoWheelRear()
 {

@@ -11,6 +11,8 @@
 #include "InputActionValue.h"
 #include "ChaosWheeledVehicleMovementComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 #define LOCTEXT_NAMESPACE "VehiclePawn"
 
@@ -79,7 +81,7 @@ void AVehicleDemoPawn::SetupPlayerInputComponent(class UInputComponent* PlayerIn
 
 		// throttle 
 		EnhancedInputComponent->BindAction(ThrottleAction, ETriggerEvent::Triggered, this, &AVehicleDemoPawn::Throttle);
-		EnhancedInputComponent->BindAction(ThrottleAction, ETriggerEvent::Completed, this, &AVehicleDemoPawn::Throttle);
+		EnhancedInputComponent->BindAction(ThrottleAction, ETriggerEvent::Completed, this, &AVehicleDemoPawn::ThrottleOff);
 
 		// break 
 		EnhancedInputComponent->BindAction(BrakeAction, ETriggerEvent::Triggered, this, &AVehicleDemoPawn::Brake);
@@ -140,6 +142,34 @@ void AVehicleDemoPawn::Throttle(const FInputActionValue& Value)
 
 	// add the input
 	ChaosVehicleMovement->SetThrottleInput(ThrottleValue);
+
+	// add skidding vfx on rear wheels
+	TArray<int32> RearWheelIndices = { 2, 3 };
+	
+	for (int32 WheelIndex : RearWheelIndices)
+	{
+		const FWheelStatus& WheelStatus = ChaosVehicleMovement->GetWheelState(WheelIndex);
+		float SkidMagnitude = FMath::Abs(WheelStatus.SkidMagnitude);
+		// during vehicle roll, spawn skid effects on wheels with high load and traction, simulating realistic tire behavior
+		if (WheelSkiddingVFX && WheelStatus.bIsSkidding && SkidMagnitude > 100.f)
+		{
+			// get the bone location for the wheel
+			FName BoneName = ChaosVehicleMovement->WheelSetups[WheelIndex].BoneName;
+			FVector BoneLoc = GetMesh()->GetBoneLocation(BoneName);
+		
+			// spawn emitter at wheel location
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), WheelSkiddingVFX, BoneLoc, FRotator::ZeroRotator, true);
+		}
+	}
+}
+
+void AVehicleDemoPawn::ThrottleOff(const FInputActionValue& Value)
+{
+	float ThrottleOffValue = Value.Get<float>();
+
+	ChaosVehicleMovement->SetThrottleInput(ThrottleOffValue);
+	if (ChaosVehicleMovement->GetEngineRotationSpeed() > 6300.f)
+		TrySpawnPopAndBangFX();
 }
 
 void AVehicleDemoPawn::Brake(const FInputActionValue& Value)
@@ -233,8 +263,30 @@ void AVehicleDemoPawn::DownShift(const FInputActionValue& Value)
 {
 	if (--CurrentGear <= MinReverseGear)
 		CurrentGear = MinReverseGear;
+
+	if (ChaosVehicleMovement->GetEngineRotationSpeed() > 4000.f)
+		TrySpawnPopAndBangFX();
 		
 	ChaosVehicleMovement->SetTargetGear(CurrentGear, false);
+}
+
+void AVehicleDemoPawn::TrySpawnPopAndBangFX() const
+{
+	if (PopAndBangVFX && NumExhaust > 0)
+	{
+		// Todo : find better way to iterate all existing exhaust
+		TArray<FName> ExhaustSocketNames = { TEXT("LeftExhaust"), TEXT("RightExhaust") };
+
+		for (int32 i = 0; i < ExhaustSocketNames.Num(); ++i)
+		{
+			FName& SocketName = ExhaustSocketNames[i];
+			if (GetMesh()->DoesSocketExist(SocketName))
+			{
+				FVector SpawnLocation = GetMesh()->GetSocketLocation(SocketName);
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), PopAndBangVFX, SpawnLocation, FRotator::ZeroRotator, true);	
+			}
+		}
+	}
 }
 
 #undef LOCTEXT_NAMESPACE

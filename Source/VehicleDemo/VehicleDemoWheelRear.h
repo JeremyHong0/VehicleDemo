@@ -16,4 +16,6 @@ class UVehicleDemoWheelRear : public UChaosVehicleWheel
 
 public:
 	UVehicleDemoWheelRear();
+
+	
 };
